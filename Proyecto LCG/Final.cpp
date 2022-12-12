@@ -40,6 +40,7 @@ void animate(void);
 unsigned int SCR_WIDTH = 800;
 unsigned int SCR_HEIGHT = 600;
 GLFWmonitor *monitors;
+float escalaGeneral = 20.0f;
 
 //Varibles
 float t, valorR, valorG, valorB = 0.0f;
@@ -66,14 +67,20 @@ glm::vec3 lightDirection(0.0f, -1.0f, 0.0f);				//Editado. Direccion de la luz n
 // posiciones
 //float x = 0.0f;
 //float y = 0.0f;
-float	movAuto_x = 0.0f,
-		movAuto_y = 0.0f,
-		movAuto_z = 50.0f,
-		orienta = 0.0f;
+float
+movAuto_x = 0.0f,
+movAuto_y = 0.0f,
+movAuto_z = 50.0f,
+orienta = 0.0f,
+giroPuertas = 0.0f;
+		
 		
 float giroLlantas = 0.0f;
 
-bool	animacion = false,
+bool
+animacion = false,
+animacionPuertas = false,
+estadoPuertas = false,
 animacion2 = false,
 recorrido1 = true,
 recorrido2 = false,
@@ -346,11 +353,25 @@ void animate(void)
 				recorrido5 = false;
 				recorrido1 = true;
 			}
+		}
+	}
 
-
-
-
-
+	// Animacion de las puertas
+	if (animacionPuertas)
+	{
+		if (estadoPuertas) { // Si las puertas estan abiertas
+			giroPuertas -= 2.0f;
+			if (giroPuertas <= 0.0f) {
+				animacionPuertas = false;
+				estadoPuertas = false;
+			}
+		}
+		else { // Si las puertas estan cerradas
+			giroPuertas += 2.0f;
+			if (giroPuertas >= 90.0f) {
+				animacionPuertas = false;
+				estadoPuertas = true;
+			}
 		}
 	}
 }
@@ -420,12 +441,12 @@ int main()
 
 	vector<std::string> faces
 	{
-		"resources/skybox/right.jpg",
-		"resources/skybox/left.jpg",
-		"resources/skybox/top.jpg",
-		"resources/skybox/bottom.jpg",
-		"resources/skybox/front.jpg",
-		"resources/skybox/back.jpg"
+		"resources/skybox/posx.jpg",
+		"resources/skybox/negx.jpg",
+		"resources/skybox/posy.jpg",
+		"resources/skybox/negy.jpg",
+		"resources/skybox/posz.jpg",
+		"resources/skybox/negz.jpg"
 	};
 
 	Skybox skybox = Skybox(faces);
@@ -437,7 +458,7 @@ int main()
 
 	// load models
 	// -----------
-	Model piso("resources/objects/piso/piso.obj");
+	Model piso("resources/objects/piso/piso.obj"); //modelo modificado
 	Model botaDer("resources/objects/Personaje/bota.obj");
 	Model piernaDer("resources/objects/Personaje/piernader.obj");
 	Model piernaIzq("resources/objects/Personaje/piernader.obj");
@@ -447,17 +468,21 @@ int main()
 	Model cabeza("resources/objects/Personaje/cabeza.obj");
 	Model carro("resources/objects/lambo/carroceria.obj");
 	Model llanta("resources/objects/lambo/Wheel.obj");
-	Model casaVieja("resources/objects/casa/OldHouse.obj");
-	Model casaDoll("resources/objects/casa/DollHouse.obj");
-	Model casaBrujas("resources/objects/brujas/casaBrujas.obj"); //modelo agregado
-	Model cubito("resources/objects/Cubito/cubo_yo.obj"); //modelo agregado
-	Model ciudad("resources/objects/Ciudad/ciudad.obj"); //modelo agregado
+	Model casa("resources/objects/casa/casa.obj"); //modelo agregado
+	Model techo("resources/objects/casa/techo.obj"); //modelo agregado
+	Model puerta_dorm("resources/objects/puerta_dorm/puerta.obj"); //modelo agregado
+	Model puerta_ban("resources/objects/puerta_ban/puerta.obj"); //modelo agregado
+	Model puerta_ext("resources/objects/puerta_ext/puerta.obj"); //modelo agregado
+	Model cama_mat("resources/objects/cama_matrimonial/cama.obj"); //modelo agregado
+	Model cama("resources/objects/cama/cama.obj"); //modelo agregado
 
+	/*
 	ModelAnim animacionPersonaje("resources/objects/Personaje1/PersonajeBrazo.dae");
 	animacionPersonaje.initShaders(animShader.ID);
 
 	ModelAnim ninja("resources/objects/ZombieWalk/ZombieWalk.dae");
 	ninja.initShaders(animShader.ID);
+	*/
 
 	//Inicialización de KeyFrames
 	//aqui poner frames para la animacion automatica
@@ -661,7 +686,7 @@ int main()
 		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
 		glm::vec3 ambientColor = diffuseColor * glm::vec3(0.75f);
 		
-
+		/*
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Personaje Animacion
 		// -------------------------------------------------------------------------------------------------------------------------
@@ -693,6 +718,7 @@ int main()
 		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		animShader.setMat4("model", model);
 		ninja.Draw(animShader);
+		*/
 
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Escenario
@@ -700,7 +726,7 @@ int main()
 		staticShader.use();
 		staticShader.setMat4("projection", projection);
 		staticShader.setMat4("view", view);
-
+		/*
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(-80.0f, -1.0f, 0.0f));							//Aqui se implemento el modelo nuevo (casa brujas)
 		model = glm::scale(model, glm::vec3(2.0f));
 		staticShader.setMat4("model", model);
@@ -720,6 +746,7 @@ int main()
 		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		staticShader.setMat4("model", model);
 		casaDoll.Draw(staticShader);
+		*/
 
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f));
@@ -727,10 +754,100 @@ int main()
 		staticShader.setMat4("model", model);
 		piso.Draw(staticShader);
 
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -70.0f));
-		model = glm::scale(model, glm::vec3(5.0f));
+		//--------------------------------------------------------------------------------------------------------------------------
+		// Casa
+		//--------------------------------------------------------------------------------------------------------------------------
+
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));			// Toda la estructura de la casa
+		model = glm::scale(model, glm::vec3(escalaGeneral));
 		staticShader.setMat4("model", model);
-		casaVieja.Draw(staticShader);
+		casa.Draw(staticShader);
+		/*
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 70.0f));			// Solo el techo de la casa
+		model = glm::scale(model, glm::vec3(40.0f));
+		staticShader.setMat4("model", model);
+		techo.Draw(staticShader);
+		
+		*/
+		// Puertas de dormitorios
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-0.1f * escalaGeneral, 0.0f, 0.0f));					// Puerta en el dormitorio frontal
+		model = glm::rotate(model, glm::radians(giroPuertas), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(20.0f));
+		staticShader.setMat4("model", model);
+		puerta_dorm.Draw(staticShader);
+
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-1.4f * escalaGeneral, 0.0f, -1.8f * escalaGeneral));	// Puerta en el dormitorio lateral
+		model = glm::rotate(model, glm::radians(giroPuertas - 90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(20.0f));
+		staticShader.setMat4("model", model);
+		puerta_dorm.Draw(staticShader);
+
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-0.1f * escalaGeneral, 0.0f, -5.9f * escalaGeneral));	// Puerta en el dormitorio trasero
+		model = glm::rotate(model, glm::radians(-giroPuertas), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(20.0f));
+		staticShader.setMat4("model", model);
+		puerta_dorm.Draw(staticShader);
+		
+		// Puertas de los baños
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-1.4f * escalaGeneral, 0.0f, -0.1f * escalaGeneral));	// Puerta en el dormitorio trasero
+		model = glm::rotate(model, glm::radians(giroPuertas - 90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(20.0f));
+		staticShader.setMat4("model", model);
+		puerta_ban.Draw(staticShader);
+
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(0.1f * escalaGeneral, 0.0f, -5.9f * escalaGeneral));	// Puerta en el dormitorio trasero
+		model = glm::rotate(model, glm::radians(giroPuertas - 180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(20.0f));
+		staticShader.setMat4("model", model);
+		puerta_ban.Draw(staticShader);
+
+		// Puertas exteriores
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(0.1f * escalaGeneral, 0.0f, 0.0f));					// Puerta en el dormitorio frontal
+		model = glm::rotate(model, glm::radians(giroPuertas -180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(20.0f));
+		staticShader.setMat4("model", model);
+		puerta_ext.Draw(staticShader);
+
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(3.8f * escalaGeneral, 0.0f, -9.6f * escalaGeneral));					// Puerta en el dormitorio frontal
+		model = glm::rotate(model, glm::radians(giroPuertas), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(20.0f));
+		staticShader.setMat4("model", model);
+		puerta_ext.Draw(staticShader);
+
+		//--------------------------------------------------------------------------------------------------------------------------
+		// Cama matrimonial
+		//--------------------------------------------------------------------------------------------------------------------------
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-4.3f * escalaGeneral, 0.0f, 2.1f * escalaGeneral));					// Cama matrimonial
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(escalaGeneral));
+		staticShader.setMat4("model", model);
+		cama_mat.Draw(staticShader);
+		
+		//--------------------------------------------------------------------------------------------------------------------------
+		// Camas individuales
+		//--------------------------------------------------------------------------------------------------------------------------
+
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-3.8f * escalaGeneral, 0.0f, -5.8f * escalaGeneral));					// Cama izq. del dormitorio lateral
+		model = glm::scale(model, glm::vec3(escalaGeneral));
+		staticShader.setMat4("model", model);
+		cama.Draw(staticShader);
+
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f * escalaGeneral, 0.0f, -5.8f * escalaGeneral));					// Cama der. del dormitorio lateral
+		model = glm::scale(model, glm::vec3(escalaGeneral));
+		staticShader.setMat4("model", model);
+		cama.Draw(staticShader);
+
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-4.3f * escalaGeneral, 0.0f, -6.5f * escalaGeneral));					// Cama izq. del dormitorio trasero
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(escalaGeneral));
+		staticShader.setMat4("model", model);
+		cama.Draw(staticShader);
+
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-4.3f * escalaGeneral, 0.0f, -9.0f * escalaGeneral));					// Cama der. del dormitorio trasero
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(escalaGeneral));
+		staticShader.setMat4("model", model);
+		cama.Draw(staticShader);
 
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Carro
@@ -934,6 +1051,12 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 		}*/
 	}
 
+	// tecla para activar animacion de todas las puertas
+	if (key == GLFW_KEY_P && action == GLFW_PRESS)
+	{
+		animacionPuertas ^= true;
+	}
+
 	//Car animation
 	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
 	{
@@ -952,7 +1075,7 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 	}
 
 	//To play KeyFrame animation 
-	if (key == GLFW_KEY_P && action == GLFW_PRESS)
+	if (key == GLFW_KEY_0 && action == GLFW_PRESS)
 	{
 		if (play == false && (FrameIndex > 1))
 		{
