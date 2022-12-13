@@ -476,6 +476,8 @@ int main()
 	Model cama_mat("resources/objects/cama_matrimonial/cama.obj"); //modelo agregado
 	Model cama("resources/objects/cama/cama.obj"); //modelo agregado
 	Model ropero("resources/objects/ropero/ropero.obj"); //modelo agregado
+	Model bano("resources/objects/bano/bano.obj"); //modelo agregado
+	Model cocina("resources/objects/cocina/cocina.obj"); //modelo agregado
 
 	/*
 	ModelAnim animacionPersonaje("resources/objects/Personaje1/PersonajeBrazo.dae");
@@ -827,7 +829,6 @@ int main()
 		//--------------------------------------------------------------------------------------------------------------------------
 		// Camas individuales
 		//--------------------------------------------------------------------------------------------------------------------------
-
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(-3.8f * escalaGeneral, 0.0f, -5.8f * escalaGeneral));					// Cama izq. del dormitorio lateral
 		model = glm::scale(model, glm::vec3(escalaGeneral));
 		staticShader.setMat4("model", model);
@@ -853,7 +854,6 @@ int main()
 		//--------------------------------------------------------------------------------------------------------------------------
 		// Roperos
 		//--------------------------------------------------------------------------------------------------------------------------
-
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(-0.1f * escalaGeneral, 0.0f, 3.0f * escalaGeneral));					// Ropero dormitorio principal
 		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(escalaGeneral));
@@ -871,6 +871,29 @@ int main()
 		model = glm::scale(model, glm::vec3(escalaGeneral));
 		staticShader.setMat4("model", model);
 		ropero.Draw(staticShader);
+		
+		//--------------------------------------------------------------------------------------------------------------------------
+		// Baños
+		//--------------------------------------------------------------------------------------------------------------------------
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-4.3f * escalaGeneral, 0.0f, -1.6f * escalaGeneral));					// Ropero dormitorio principal
+		model = glm::scale(model, glm::vec3(escalaGeneral));
+		staticShader.setMat4("model", model);
+		bano.Draw(staticShader);
+
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(1.6f * escalaGeneral, 0.0f, -9.5f * escalaGeneral));					// Ropero dormitorio principal
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(escalaGeneral));
+		staticShader.setMat4("model", model);
+		bano.Draw(staticShader);
+
+		//--------------------------------------------------------------------------------------------------------------------------
+		// Cocina
+		//--------------------------------------------------------------------------------------------------------------------------
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(1.8f * escalaGeneral, 0.0f, -5.8f * escalaGeneral));
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(escalaGeneral));
+		staticShader.setMat4("model", model);
+		cocina.Draw(staticShader);
 
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Carro
