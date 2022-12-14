@@ -48,7 +48,7 @@ float t, valorR, valorG, valorB = 0.0f;
 void getResolution(void);
 
 // camera
-Camera camera(glm::vec3(0.0f, 10.0f, 90.0f));
+Camera camera(glm::vec3(0.0f, 200.0f, 200.0f));
 float MovementSpeed = 0.1f;
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
@@ -478,6 +478,11 @@ int main()
 	Model ropero("resources/objects/ropero/ropero.obj"); //modelo agregado
 	Model bano("resources/objects/bano/bano.obj"); //modelo agregado
 	Model cocina("resources/objects/cocina/cocina.obj"); //modelo agregado
+	Model arbol("resources/objects/arbol/arbol.obj"); //modelo agregado
+	Model arbol_navidad("resources/objects/arbol_navidad/arbol_navidad.obj"); //modelo agregado
+	Model sala("resources/objects/sala/sala.obj"); //modelo agregado
+	Model tele("resources/objects/tele/tele.obj"); //modelo agregado
+	Model comedor("resources/objects/comedor/comedor.obj"); //modelo agregado
 
 	/*
 	ModelAnim animacionPersonaje("resources/objects/Personaje1/PersonajeBrazo.dae");
@@ -630,21 +635,21 @@ int main()
 		// don't forget to enable shader before setting uniforms
 		staticShader.use();
 		//Setup Advanced Lights
-		staticShader.setVec3("viewPos", camera.Position);
+		staticShader.setVec3("viewPos", camera.Position);										//Iluminacion general
 		staticShader.setVec3("dirLight.direction", lightDirection);
 		staticShader.setVec3("dirLight.ambient", glm::vec3(0.8f, 0.8f, 0.8f));				//Editado. Caras menos iluminadas
 		staticShader.setVec3("dirLight.diffuse", glm::vec3(0.1f, 0.1f, 0.1f));				//Editado. Caras mas iluminadas
 		staticShader.setVec3("dirLight.specular", glm::vec3(0.5f, 0.5f, 0.5f));				//Editado. Reflejos con color
 
-		
-		staticShader.setVec3("pointLight[0].position", lightPosition);						//Posicion de una fuente de luz
+		//Posicion de una fuente de luz
+		staticShader.setVec3("pointLight[0].position", glm::vec3(3.0f * escalaGeneral, 0.0f, -0.8f * escalaGeneral));
 		staticShader.setVec3("pointLight[0].ambient", glm::vec3(0.5f, 0.5f, 0.5f));			//Editado
 		staticShader.setVec3("pointLight[0].diffuse", glm::vec3(0.0f, 0.0f, 0.0f));			//Editado
 		staticShader.setVec3("pointLight[0].specular", glm::vec3(0.0f, 0.0f, 0.0f));
 		staticShader.setFloat("pointLight[0].constant", 0.08f);
-		staticShader.setFloat("pointLight[0].linear", 0.009f);								//Determinar cuanto abarcara 
+		staticShader.setFloat("pointLight[0].linear", 0.01f);									//Determinar cuanto abarcara 
 		staticShader.setFloat("pointLight[0].quadratic", 0.0032f);							//Determinar cuanto abarcara
-
+		
 		/*
 		staticShader.setVec3("pointLight[1].position", glm::vec3(180.0f, 1.0f, 0.0f));		//Otra fuente de luz
 		staticShader.setVec3("pointLight[1].ambient", glm::vec3(0.8f, 0.8f, 0.0f));
@@ -663,7 +668,7 @@ int main()
 		staticShader.setFloat("pointLight[2].quadratic", 0.0032f);
 		*/
 
-		staticShader.setVec3("spotLight.position", glm::vec3(0.0f, 20.0f, 10.0f));
+		staticShader.setVec3("spotLight.position", glm::vec3(3.0f, 0.0f, -0.8f));
 		staticShader.setVec3("spotLight.direction", glm::vec3(0.0f, -1.0f, 0.0f));
 		staticShader.setVec3("spotLight.ambient", glm::vec3(0.0f, 0.0f, 0.0f));
 		staticShader.setVec3("spotLight.diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
@@ -773,39 +778,39 @@ int main()
 		
 		*/
 		// Puertas de dormitorios
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(-0.1f * escalaGeneral, 0.0f, 0.0f));					// Puerta en el dormitorio frontal
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-0.1f * escalaGeneral, 0.0f, 0.0f));									// Puerta en el dormitorio frontal
 		model = glm::rotate(model, glm::radians(giroPuertas), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(20.0f));
 		staticShader.setMat4("model", model);
 		puerta_dorm.Draw(staticShader);
 
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(-1.4f * escalaGeneral, 0.0f, -1.8f * escalaGeneral));	// Puerta en el dormitorio lateral
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-1.4f * escalaGeneral, 0.0f, -1.8f * escalaGeneral));					// Puerta en el dormitorio lateral
 		model = glm::rotate(model, glm::radians(giroPuertas - 90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(20.0f));
 		staticShader.setMat4("model", model);
 		puerta_dorm.Draw(staticShader);
 
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(-0.1f * escalaGeneral, 0.0f, -5.9f * escalaGeneral));	// Puerta en el dormitorio trasero
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-0.1f * escalaGeneral, 0.0f, -5.9f * escalaGeneral));					// Puerta en el dormitorio trasero
 		model = glm::rotate(model, glm::radians(-giroPuertas), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(20.0f));
 		staticShader.setMat4("model", model);
 		puerta_dorm.Draw(staticShader);
 		
 		// Puertas de los baños
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(-1.4f * escalaGeneral, 0.0f, -0.1f * escalaGeneral));	// Puerta en el dormitorio trasero
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-1.4f * escalaGeneral, 0.0f, -0.1f * escalaGeneral));					// Puerta en el dormitorio trasero
 		model = glm::rotate(model, glm::radians(giroPuertas - 90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(20.0f));
 		staticShader.setMat4("model", model);
 		puerta_ban.Draw(staticShader);
 
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(0.1f * escalaGeneral, 0.0f, -5.9f * escalaGeneral));	// Puerta en el dormitorio trasero
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(0.1f * escalaGeneral, 0.0f, -5.9f * escalaGeneral));					// Puerta en el dormitorio trasero
 		model = glm::rotate(model, glm::radians(giroPuertas - 180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(20.0f));
 		staticShader.setMat4("model", model);
 		puerta_ban.Draw(staticShader);
 
 		// Puertas exteriores
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(0.1f * escalaGeneral, 0.0f, 0.0f));					// Puerta en el dormitorio frontal
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(0.1f * escalaGeneral, 0.0f, 0.0f));									// Puerta en el dormitorio frontal
 		model = glm::rotate(model, glm::radians(giroPuertas -180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(20.0f));
 		staticShader.setMat4("model", model);
@@ -875,12 +880,12 @@ int main()
 		//--------------------------------------------------------------------------------------------------------------------------
 		// Baños
 		//--------------------------------------------------------------------------------------------------------------------------
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(-4.3f * escalaGeneral, 0.0f, -1.6f * escalaGeneral));					// Ropero dormitorio principal
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-4.3f * escalaGeneral, 0.0f, -1.6f * escalaGeneral));					// Baño lateral
 		model = glm::scale(model, glm::vec3(escalaGeneral));
 		staticShader.setMat4("model", model);
 		bano.Draw(staticShader);
 
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(1.6f * escalaGeneral, 0.0f, -9.5f * escalaGeneral));					// Ropero dormitorio principal
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(1.6f * escalaGeneral, 0.0f, -9.5f * escalaGeneral));					// Baño trasero
 		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(escalaGeneral));
 		staticShader.setMat4("model", model);
@@ -894,6 +899,52 @@ int main()
 		model = glm::scale(model, glm::vec3(escalaGeneral));
 		staticShader.setMat4("model", model);
 		cocina.Draw(staticShader);
+
+		//--------------------------------------------------------------------------------------------------------------------------
+		// Sala
+		//--------------------------------------------------------------------------------------------------------------------------
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(3.8f * escalaGeneral, 0.0f, -1.3f * escalaGeneral));
+		model = glm::scale(model, glm::vec3(escalaGeneral));
+		staticShader.setMat4("model", model);
+		sala.Draw(staticShader);
+
+		//--------------------------------------------------------------------------------------------------------------------------
+		// Tele
+		//--------------------------------------------------------------------------------------------------------------------------
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(0.1f * escalaGeneral, 0.0f, -4.1f * escalaGeneral));
+		model = glm::scale(model, glm::vec3(escalaGeneral));
+		staticShader.setMat4("model", model);
+		tele.Draw(staticShader);
+
+		//--------------------------------------------------------------------------------------------------------------------------
+		// Comedor
+		//--------------------------------------------------------------------------------------------------------------------------
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(3.8f * escalaGeneral, 0.0f, -3.6f * escalaGeneral));
+		model = glm::scale(model, glm::vec3(escalaGeneral));
+		staticShader.setMat4("model", model);
+		comedor.Draw(staticShader);
+
+		//--------------------------------------------------------------------------------------------------------------------------
+		// Arbol navidad
+		//--------------------------------------------------------------------------------------------------------------------------
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(3.0f * escalaGeneral, 0.0f, -0.8f * escalaGeneral));
+		model = glm::scale(model, glm::vec3(escalaGeneral));
+		staticShader.setMat4("model", model);
+		arbol_navidad.Draw(staticShader);
+
+		//--------------------------------------------------------------------------------------------------------------------------
+		// Arbol
+		//--------------------------------------------------------------------------------------------------------------------------
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(12.0f * escalaGeneral, 0.0f, 12.0f * escalaGeneral));
+		model = glm::scale(model, glm::vec3(escalaGeneral));
+		staticShader.setMat4("model", model);
+		arbol.Draw(staticShader);
+
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-10.0f * escalaGeneral, 0.0f, -20.0f * escalaGeneral));
+		model = glm::scale(model, glm::vec3(escalaGeneral));
+		staticShader.setMat4("model", model);
+		arbol.Draw(staticShader);
+
 
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Carro
