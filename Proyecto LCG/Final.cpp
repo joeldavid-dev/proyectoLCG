@@ -48,7 +48,7 @@ float t, valorR, valorG, valorB = 0.0f;
 void getResolution(void);
 
 // camera
-Camera camera(glm::vec3(0.0f, 200.0f, 200.0f));
+Camera camera(glm::vec3(0.0f, 150.0f, 400.0f));
 float MovementSpeed = 0.1f;
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
@@ -64,30 +64,40 @@ double	deltaTime = 0.0f,
 glm::vec3 lightPosition(0.0f, 4.0f, -10.0f);				//Editado. Posicion de la fuente de luz
 glm::vec3 lightDirection(0.0f, -1.0f, 0.0f);				//Editado. Direccion de la luz natural
 
-// posiciones
-//float x = 0.0f;
-//float y = 0.0f;
+// Variables de animaciones
 float
-movAuto_x = 0.0f,
+movAuto_x = 2.5f,
 movAuto_y = 0.0f,
-movAuto_z = 0.0f,
-orienta = 0.0f,
-giroPuertas = 0.0f;
+movAuto_z = 3.0f,
+orienta = 180.0f,
+giroPuertas = 0.0f,
+variableTecho = 0.0f,
+techoX = 0.0f,
+techoY = 0.0f,
+techoZ = 0.0f,
+giroTechoX = 0.0f,
+giroTechoZ = 0.0f;
 
 bool
-animacion = false,
+animacionAuto = false,
 animacionPuertas = false,
+animacionTecho = false,
 estadoPuertas = false,
-animacion2 = false,
+estadoTecho = false,
+estadoAuto = false,
 recorrido1 = true,
 recorrido2 = false,
 recorrido3 = false,
 recorrido4 = false,
 recorrido5 = false,
-recorrido6 = false;
-
-bool etapa1, etapa2, etapa3, etapa4, etapa5;
-
+recorrido6 = false,
+recorrido7 = false,
+recorrido8 = false,
+recorrido9 = false,
+recorrido10 = false,
+recorrido11 = false,
+recorrido12 = false,
+recorrido13 = false;
 
 //Keyframes (Manipulación y dibujo)
 float	posX = 0.0f,
@@ -174,7 +184,7 @@ void animate(void)
 	valorG = sin(t);
 	valorB = tan(t);
 	*/
-
+	// Inicia animacion por key frames
 	if (play)
 	{
 		if (i_curr_steps >= i_max_steps) //end of animation between frames?
@@ -204,131 +214,191 @@ void animate(void)
 			rotRodIzq += rodIzqInc;
 			rotRodDer += rodDerInc;
 			giroRobot += giroRobotInc;
-			brazoDer += brazoDerInc;				//agregado
+			brazoDer += brazoDerInc;
 			brazoIzq += brazoIzqInc;
 			giroCabeza += giroCabezaInc;
 			i_curr_steps++;
 		}
 	}
 
-	//Vehículo
-	if (animacion)
+	//Animacion del techo
+	if (animacionTecho)
 	{
-		if (etapa1) // en esta etapa el carro retrocede
-		{
-			if (movAuto_z >= 0.0f)
-			{
-				movAuto_z -= 0.2f;
+		if (estadoTecho) { // Estado true, el techo esta despegado
+			if (variableTecho > 0.0f) {
+				variableTecho -= 0.002f;
 			}
-			else
-			{
-				etapa1 = false;
-				etapa2 = true;
+			else {
+				variableTecho = 0.0f;
+				animacionTecho = false;
+				estadoTecho = false;
 			}
 		}
-
-		if (etapa2) // en esta etapa el carro sube
-		{
-			if (movAuto_y <= 50.0f)
-				movAuto_y += 0.2f;
-			else
-			{
-				etapa2 = false;
-				etapa3 = true;
+		else { // Estado false, el techo esta en su lugar
+			if (variableTecho < 1.0f) {
+				variableTecho += 0.002f;
+			}
+			else {
+				variableTecho = 1.0f;
+				animacionTecho = false;
+				estadoTecho = true;
 			}
 		}
-
-		if (etapa3) // en esta etapa el carro avanza flotando
-		{
-			if (movAuto_z <= 150.0f)
-				movAuto_z += 0.2f;
-			else
-			{
-				etapa3 = false;
-				etapa4 = true;
-			}
-		}
-
-		if (etapa4) // en esta etapa el carro baja
-		{
-			if (movAuto_y >= 0.0f)
-				movAuto_y -= 0.2f;
-			else
-			{
-				etapa4 = false;
-				etapa5 = true;
-			}
-		}
-
-		if (etapa5) // en esta etapa el carro avanza en el suelo
-		{
-			if (movAuto_z <= 200.0f)
-			{
-				movAuto_z += 0.2f;
-			}
-			else
-				etapa5 = false;
-		}
+		techoY = sin(variableTecho * M_PI) * 30.0f;
+		techoX = variableTecho * -50.0f;
+		techoZ = variableTecho * -50.0f;
+		giroTechoX = variableTecho * 720.0f;
+		giroTechoZ = variableTecho * 1440.0f;
 	}
 
-	if (animacion2)
+	// Animacion del auto
+	if (animacionAuto)
 	{
-		if (recorrido1) // origen a (0,0,200)
+		if (recorrido1) // origen (2.5,0,3) a (2.5,0,8.8)
 		{
-			movAuto_x = 0.0f;
-			movAuto_z += 2.0f;
-			orienta = 0.0f;
-			if (movAuto_z >= 200.0f)
+			movAuto_z += 0.02f;
+			if (movAuto_z >= 8.8f)
 			{
 				recorrido1 = false;
 				recorrido2 = true;
 			}
 		}
 
-		if (recorrido2) // (0,0,200) a (-250,0,200)
+		if (recorrido2) // vuelta 90 grados avanza 1.8m en x y z
 		{
-			orienta = -90.0f;
-			movAuto_x -= 2.0f;
+			movAuto_x -= 0.02f;
+			movAuto_z += 0.02f;
+			orienta -= 1.0f;
 
-			if (movAuto_x <= -250.0f)
+			if (orienta <= 90.0f)
 			{
 				recorrido2 = false;
 				recorrido3 = true;
 			}
 		}
 
-		if (recorrido3) // (-250,0,200) a (0,0,-200)
+		if (recorrido3) // (0.7,0,10) a (98.8,0,10)
 		{
-			movAuto_x += (0.625f * 2.0f);
-			movAuto_z -= 2.0f;
-			orienta = 147.99f;
-			if (movAuto_x >= 0.0f)
+			movAuto_x += 0.2f;
+			if (movAuto_x >= 98.8f)
 			{
 				recorrido3 = false;
 				recorrido4 = true;
 			}
 		}
 
-		if (recorrido4) // (0,0,-200) a (-250,0,-200)
+		if (recorrido4) // giro 90 grados, avanza 1.8m
 		{
-			movAuto_x -= 2.0f;
-			orienta = -90.0f;
-			if (movAuto_x <= -250.0f)
+			movAuto_x += 0.02f;
+			movAuto_z += 0.02f;
+			orienta -= 1.0f;
+			if (orienta <= 0.0f)
 			{
 				recorrido4 = false;
 				recorrido5 = true;
 			}
 		}
 
-		if (recorrido5) // (-250,0,-200) a (0,0,0)
+		if (recorrido5) // (100,0,11.8) a (100,0,38)
 		{
-			movAuto_x += (1.25 * 2.0f);
-			movAuto_z += 2.0f;
-			orienta = 51.3f;
-			if (movAuto_x >= 0.0f)
+			movAuto_z += 0.2f;
+			if (movAuto_z >= 38.0f)
 			{
 				recorrido5 = false;
+				recorrido6 = true;
+			}
+		}
+
+		if (recorrido6) // giro 90 grados, avanza 1.8m
+		{
+			movAuto_x -= 0.02f;
+			movAuto_z += 0.02f;
+			orienta -= 1.0f;
+			if (orienta <= -90.0f)
+			{
+				recorrido6 = false;
+				recorrido7 = true;
+			}
+		}
+
+		if (recorrido7) // (98.8,0,39.8) a (31.8,0,39.8)
+		{
+			movAuto_x -= 0.2f;
+			if (movAuto_x <= 31.8f)
+			{
+				recorrido7 = false;
+				recorrido8 = true;
+			}
+		}
+
+		if (recorrido8) // giro 90 grados, avanza 1.8m
+		{
+			movAuto_x -= 0.02f;
+			movAuto_z -= 0.02f;
+			orienta -= 1.0f;
+			if (orienta <= -180.0f)
+			{
+				recorrido8 = false;
+				recorrido9 = true;
+			}
+		}
+
+		if (recorrido9) // (30,0,38) a (30,0,11.8)
+		{
+			movAuto_z -= 0.2f;
+			if (movAuto_z <= 11.8f)
+			{
+				recorrido9 = false;
+				recorrido10 = true;
+			}
+		}
+
+		if (recorrido10) // giro 90 grados, avanza 1.8m
+		{
+			movAuto_x -= 0.02f;
+			movAuto_z -= 0.02f;
+			orienta += 1.0f;
+			if (orienta >= -90.0f)
+			{
+				recorrido10 = false;
+				recorrido11 = true;
+			}
+		}
+
+		if (recorrido11) // (28.8,0,10) a (2.5,0,10)
+		{
+			movAuto_x -= 0.2f;
+			if (movAuto_x <= 4.3f)
+			{
+				recorrido11 = false;
+				recorrido12 = true;
+			}
+		}
+
+		if (recorrido12) // giro 90 grados, avanza 1.8m
+		{
+			movAuto_x -= 0.02f;
+			movAuto_z -= 0.02f;
+			orienta -= 1.0f;
+			if (orienta <= -180.0f)
+			{
+				recorrido12 = false;
+				recorrido13 = true;
+			}
+		}
+
+		if (recorrido13) // (28.8,0,10) a (2.5,0,10)
+		{
+			movAuto_z -= 0.02f;
+			if (movAuto_z <= 3.0f)
+			{
+				animacionAuto = false;
+				recorrido13 = false;
 				recorrido1 = true;
+				movAuto_x = 2.5f;
+				movAuto_y = 0.0f;
+				movAuto_z = 3.0f;
+				orienta = 180.0f;
 			}
 		}
 	}
@@ -458,15 +528,7 @@ int main()
 	Model sala("resources/objects/sala/sala.obj"); //modelo agregado
 	Model tele("resources/objects/tele/tele.obj"); //modelo agregado
 	Model comedor("resources/objects/comedor/comedor.obj"); //modelo agregado
-	//Model nino("resources/objects/nino/nino.fbx"); //modelo agregado
-
-	/*
-	ModelAnim animacionPersonaje("resources/objects/Personaje1/PersonajeBrazo.dae");
-	animacionPersonaje.initShaders(animShader.ID);
-
-	ModelAnim nino("resources/objects/nino/Dwarf Idle.dae");
-	nino.initShaders(animShader.ID);
-	*/
+	Model ciudad("resources/objects/ciudad/ciudad_normal.obj"); //modelo agregado
 
 
 	//--------------------------------------------------------------------------------------
@@ -723,39 +785,6 @@ int main()
 		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
 		glm::vec3 ambientColor = diffuseColor * glm::vec3(0.75f);
 		
-		/*
-		// -------------------------------------------------------------------------------------------------------------------------
-		// Personaje Animacion
-		// -------------------------------------------------------------------------------------------------------------------------
-		//Remember to activate the shader with the animation
-		animShader.use();
-		animShader.setMat4("projection", projection);
-		animShader.setMat4("view", view);
-	
-		animShader.setVec3("material.specular", glm::vec3(0.5f));
-		animShader.setFloat("material.shininess", 32.0f);
-		animShader.setVec3("light.ambient", ambientColor);
-		animShader.setVec3("light.diffuse", diffuseColor);
-		animShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
-		animShader.setVec3("light.direction", lightDirection);
-		animShader.setVec3("viewPos", camera.Position);
-
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(-40.3f, 1.75f, 0.3f)); // translate it down so it's at the center of the scene
-		model = glm::scale(model, glm::vec3(1.2f));	// it's a bit too big for our scene, so scale it down
-		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		animShader.setMat4("model", model);
-		animacionPersonaje.Draw(animShader);
-		
-		// -------------------------------------------------------------------------------------------------------------------------
-		// Segundo Personaje Animacion
-		// -------------------------------------------------------------------------------------------------------------------------
-
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(40.3f, 1.75f, 0.3f)); // translate it down so it's at the center of the scene
-		model = glm::scale(model, glm::vec3(0.5f));	// it's a bit too big for our scene, so scale it down
-		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		animShader.setMat4("model", model);
-		nino.Draw(animShader);
-		*/
 
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Escenario
@@ -763,30 +792,9 @@ int main()
 		staticShader.use();
 		staticShader.setMat4("projection", projection);
 		staticShader.setMat4("view", view);
-		/*
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(-80.0f, -1.0f, 0.0f));							//Aqui se implemento el modelo nuevo (casa brujas)
-		model = glm::scale(model, glm::vec3(2.0f));
-		staticShader.setMat4("model", model);
-		casaBrujas.Draw(staticShader);
-
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(-80.0f, -1.0f, 80.0f));							//Aqui se implemento el modelo nuevo (cubito)
-		model = glm::scale(model, glm::vec3(1.0f));
-		staticShader.setMat4("model", model);
-		cubito.Draw(staticShader);
-		
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(300.0f, 0.0f, 300.0f));							//Aqui se implemento el modelo nuevo (ciudad)
-		model = glm::scale(model, glm::vec3(5.0f));
-		staticShader.setMat4("model", model);
-		ciudad.Draw(staticShader);
-
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(250.0f, 0.0f, -10.0f));
-		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		staticShader.setMat4("model", model);
-		casaDoll.Draw(staticShader);
-		*/
 
 		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f));
+		model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.2f));
 		staticShader.setMat4("model", model);
 		piso.Draw(staticShader);
@@ -795,12 +803,14 @@ int main()
 		// Casa
 		//--------------------------------------------------------------------------------------------------------------------------
 
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));			// Toda la estructura de la casa
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));													// Toda la estructura de la casa
 		model = glm::scale(model, glm::vec3(escalaGeneral));
 		staticShader.setMat4("model", model);
 		casa.Draw(staticShader);
 		
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));			// Solo el techo de la casa
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(techoX, techoY, techoZ)*escalaGeneral);								// Solo el techo de la casa
+		model = glm::rotate(model, glm::radians(giroTechoX), glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(giroTechoZ), glm::vec3(0.0f, 0.0f, 1.0f));
 		model = glm::scale(model, glm::vec3(escalaGeneral));
 		staticShader.setMat4("model", model);
 		techo.Draw(staticShader);
@@ -961,9 +971,9 @@ int main()
 		arbol_navidad.Draw(staticShader);
 
 		//--------------------------------------------------------------------------------------------------------------------------
-		// Arbol
+		// Arboles
 		//--------------------------------------------------------------------------------------------------------------------------
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(12.0f * escalaGeneral, 0.0f, 12.0f * escalaGeneral));
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(12.0f * escalaGeneral, 0.0f, 5.0f * escalaGeneral));
 		model = glm::scale(model, glm::vec3(escalaGeneral));
 		staticShader.setMat4("model", model);
 		arbol.Draw(staticShader);
@@ -973,11 +983,17 @@ int main()
 		staticShader.setMat4("model", model);
 		arbol.Draw(staticShader);
 
+		//--------------------------------------------------------------------------------------------------------------------------
+		// Ciudad
+		//--------------------------------------------------------------------------------------------------------------------------
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(180.0f * escalaGeneral, -0.78f*escalaGeneral, 0.0f));
+		model = glm::scale(model, glm::vec3(escalaGeneral));
+		staticShader.setMat4("model", model);
+		ciudad.Draw(staticShader);
 
 		// -------------------------------------------------------------------------------------------------------------------------
 		// Carro
 		// -------------------------------------------------------------------------------------------------------------------------
-		//model = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::translate(glm::mat4(1.0f), glm::vec3(movAuto_x, movAuto_y, movAuto_z)*escalaGeneral);
 		model = glm::rotate(model, glm::radians(orienta), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(escalaGeneral));
@@ -1070,49 +1086,22 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, (float)deltaTime);
 
-	//R: resetea el carro, cuando ya acabó su animacion
-	if (key == GLFW_KEY_0 && action == GLFW_PRESS)
-	{
-		if (movAuto_z >= 200.0f)
-		{
-			movAuto_z = 50.0f;
-			animacion = false;
-		}
-	}
-
-	if (key == GLFW_KEY_E && action == GLFW_PRESS)
-	{
-		movAuto_x = -200.0f;
-		animacion2 = false;
-		/*
-		if (movAuto_z >= 200.0f)
-		{
-			movAuto_z = 50.0f;
-			animacion = false;
-		}*/
-	}
-
 	// tecla para activar animacion de todas las puertas
 	if (key == GLFW_KEY_P && action == GLFW_PRESS)
 	{
 		animacionPuertas ^= true;
 	}
 
-	//Car animation
-	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+	// tecla para activar animacion del techo
+	if (key == GLFW_KEY_T && action == GLFW_PRESS)
 	{
-		animacion ^= true;
-
-		if (movAuto_z == 50.0f)
-			etapa1 = true;
+		animacionTecho ^= true;
 	}
-	
-	if (key == GLFW_KEY_2 && action == GLFW_PRESS)
+
+	//Car animation
+	if (key == GLFW_KEY_C && action == GLFW_PRESS)
 	{
-		animacion2 ^= true;
-		movAuto_z = 0.0f;
-		//if (movAuto_z == -200.0f)
-			recorrido1 = true;
+		animacionAuto ^= true;
 	}
 
 	//To play KeyFrame animation 
